@@ -2625,4 +2625,13 @@ dl dd {
         margin-left: 10px !important;
     }
 
+    dl {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    dl dd {
+        margin-left: 0px !important;
+    }
+
 }

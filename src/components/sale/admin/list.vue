@@ -110,6 +110,15 @@
                             </dl>                            
                         </el-col>
                     </el-row>
+
+                    <h4>ITENS DO PEDIDO</h4>
+                    
+                    <ul>
+                        <li v-for="(item, i) in saleSelected.itens_sale" :key="i" style="padding: 10px;">
+                            <b style="display: block;">{{ item.product.name }}</b>
+                            <i>SubTotal: {{ item.price_subtotal }} / {{ item.quanty }} un</i>
+                        </li>
+                    </ul>
                     
                     <el-row :gutter="10">
                         <el-col :xs="24" class="u-text-right">

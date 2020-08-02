@@ -12,10 +12,10 @@
                 </li>
                 <li v-for="(item, i) in sales" :key="i" class="item-sale">
                     <a href="javascript:void(0)">
-                        <div class="image-product">
-                            <img src="https://cdn.seu.menu/uploads/avatar/99415-2020-07-16-19-06.png">
+                        <div class="image-product" @click="showInfo(item)">
+                            <img src="/public/img/lanche.png">
                         </div>
-                        <div class="description-product">
+                        <div class="description-product" @click="showInfo(item)">
                             <h3>{{ $moment(item.date).format('DD/MM/YYYY HH:mm:ss') }}</h3> 
                             <b>Valor: R$ {{ item.price_sale }}</b>
                             <i>Status: {{ $CONSTANTS.STATUS_SALES[item.status] }}</i>                            
@@ -38,7 +38,64 @@
                     </div>
                 </li>               
             </ul>
-        </div>     
+        </div> 
+        
+        <el-dialog :close-on-click-modal="false" title="DETALHES DO PEDIDO" width="40%" :visible.sync="dialogInfoSale">
+            <div v-if="dialogInfoSale">
+                
+                <div v-if="Object.keys(saleSelected).length !== 0">
+                    <el-row :gutter="10" class="u-mt-20">
+                        <el-col :xs="24" :sm="24" :md="24"> 
+                            <dl>
+                                <dt>CLIENTE:</dt>
+                                <dd>{{ saleSelected.client.name }}</dd>
+                            </dl>                            
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="10">
+                        <el-col :xs="24" :sm="24" :md="24"> 
+                            <dl>
+                                <dt>data:</dt>
+                                <dd>{{ $moment(saleSelected.date).format('DD/MM/YYYY HH:mm:ss') }}</dd>
+                            </dl>                            
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="10">
+                        <el-col :xs="24" :sm="24" :md="24"> 
+                            <dl>
+                                <dt>VALOR TOTAL:</dt>
+                                <dd>R$ {{ formatPrice(saleSelected.price_sale) }}</dd>
+                            </dl>                            
+                        </el-col>
+                    </el-row>
+                    <el-row :gutter="10">
+                        <el-col :xs="24" :sm="24" :md="24"> 
+                            <dl>
+                                <dt>STATUS:</dt>
+                                <dd>{{ $CONSTANTS.STATUS_SALES[saleSelected.status] }}</dd>
+                            </dl>                            
+                        </el-col>
+                    </el-row>
+
+                    <h4>ITENS DO PEDIDO</h4>
+                    
+                    <ul>
+                        <li v-for="(item, i) in saleSelected.itens_sale" :key="i" style="padding: 10px;">
+                            <b style="display: block;">{{ item.product.name }}</b>
+                            <i>SubTotal: {{ item.price_subtotal }} / {{ item.quanty }} un</i>
+                        </li>
+                    </ul>
+                   
+                    <el-row :gutter="10">
+                        <el-col :xs="24" class="u-text-right">
+                            <el-button size="small" type="danger" @click="dialogInfoSale = false">FECHAR</el-button>
+                        </el-col>
+                    </el-row>
+                </div>
+
+            </div>
+        </el-dialog>
+            
     </div>
 </template>
 <script>
@@ -48,19 +105,28 @@ import Vue from 'vue'
 
 export default {
     data: () => ({
+        dialogInfoSale: false,
         loadingSales: false,
         dialogAddProduct: false,
         sales: [],
         paginate: {
             page: 1,
             qtdItens: null,
-        }
+        },
+        saleSelected: {},
     }),
     mounted(){
 
         this.getAllSales();
     },
     methods:{
+        showInfo(item){
+
+            console.log(item);
+
+            this.saleSelected = item;
+            this.dialogInfoSale = true;
+        },
         cancelSale(item){
 
             this.$msgbox.confirm('Tem certeza que deseja cancelar este pedido?', 'Atenção', { confirmButtonText: 'Sim', cancelButtonText: 'Não', type: 'warning' }).then(() => {
@@ -98,6 +164,14 @@ export default {
                 this.loadingSales = false;
 
             }).catch((error) => { this.$store.commit('throwException', error); });        
+        },
+        formatPrice(value) {
+
+            if(!value)
+                return '-';
+            
+            let val = (value/1).toFixed(2).replace('.', ',')
+            return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
         },
         getPagePagination(page){
           this.paginate.page = page;
