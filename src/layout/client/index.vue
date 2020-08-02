@@ -113,15 +113,15 @@ export default {
     data: () => ({
         formAuth: 'login',
         formLogin:{
-            email: 'email@gmail.com',
-            password: '123123'
+            email: '',
+            password: ''
         },
         formRegister:{
-            name: 'teste',
-            phone: '(77) 988045503',
-            andress: 'endereço',
-            email: 'email@gmail.com',
-            password: '123123'
+            name: '',
+            phone: '',
+            andress: '',
+            email: '',
+            password: ''
         },
     }),
     mounted(){

@@ -19,7 +19,7 @@
                 <li v-for="(item, i) in dados.itens" :key="i" class="item-sale">
                     <a href="javascript:void(0)">
                         <div class="image-product">
-                            <img src="https://cdn.seu.menu/uploads/avatar/99415-2020-07-16-19-06.png">
+                            <img src="/public/img/lanche.png">
                         </div>
                         <div class="description-product">
                             <h3>{{ item.name }}</h3> 
