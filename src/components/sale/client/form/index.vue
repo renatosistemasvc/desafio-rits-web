@@ -78,7 +78,7 @@
                 <div>
                     <div class="list-product-search">
                         <ul v-if="!loadingProducts">
-                            <li v-for="(item, i) in produtos" :key="i" @click="addProductSale(item)" class="item-sale">
+                            <li v-for="(item, i) in produtos" :key="i" @click="addProductSale(item, i)" class="item-sale">
                                 <a href="javascript:void(0)">
                                     <div class="description-product">
                                         <h3>{{ item.name }}</h3> 
@@ -171,14 +171,35 @@ export default {
 
             }).catch((error) => { this.$store.commit('throwException', error) });
         },
-        addProductSale(item){
+        addProductSale(item, i){
 
-            Vue.set(item, 'quanty', 1);
-            Vue.set(item, 'sub_total', 0);
-            Vue.set(item, 'produto_id', item.id);
+            //VERIFICA SE O PRODUTO JÁ ESTÁ NO PEDIDO
+            let semaphore = false;
+            for(let i in this.dados.itens){
 
-            this.dados.itens.push(item);
+                if(this.dados.itens[i].produto_id == item.id){
+                                        
+                    semaphore = true;
+                }
+            }
+
+            //SE NÃO, ADD
+            if(!semaphore){
+
+                Vue.set(item, 'quanty', 1);
+                Vue.set(item, 'sub_total', 0);
+                Vue.set(item, 'produto_id', item.id);
+
+                this.dados.itens.push(item);
+            
+            //SE SIM, INCREMENTA
+            }else{
+
+                this.updateIncrementQuanty(i);
+            }
+           
             this.dialogAddProduct = false;
+            
         },
         calcSubTotal(i){
 
